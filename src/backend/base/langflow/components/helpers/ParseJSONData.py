@@ -1,9 +1,6 @@
-from json import JSONDecodeError
-
 from langflow.custom import Component
-from langflow.helpers.data import data_to_text
 from langflow.inputs import HandleInput, MessageTextInput
-from langflow.io import DataInput, MultilineInput, Output, StrInput
+from langflow.io import Output
 from langflow.schema import Data
 from langflow.schema.message import Message
 import jq
@@ -16,27 +13,25 @@ class ParseJSONDataComponent(Component):
     icon = "braces"
     name = "ParseJSONData"
 
-
     inputs = [
         HandleInput(
             name="input_value",
             display_name="Input",
             info="Data object to filter.",
             required=True,
-            input_types=["Message", "Data"]
+            input_types=["Message", "Data"],
         ),
         MessageTextInput(
             name="query",
             display_name="JQ Query",
             info="JQ Query to filter the data. The input is always a JSON list.",
-            required=True
+            required=True,
         ),
     ]
 
     outputs = [
         Output(display_name="Filtered Data", name="filtered_data", method="filter_data"),
     ]
-
 
     def _parse_data(self, input_value):
         if isinstance(input_value, Message):
@@ -46,7 +41,6 @@ class ParseJSONDataComponent(Component):
         return input_value
 
     def filter_data(self) -> list[Data]:
-
         to_filter = self.input_value
         if isinstance(to_filter, list):
             to_filter = [self._parse_data(f) for f in to_filter]
