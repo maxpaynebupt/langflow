@@ -3,7 +3,7 @@ from typing import Generic, TypeVar, List, Optional
 from sqlmodel import SQLModel, Session
 
 
-T = TypeVar('T', bound=SQLModel)
+T = TypeVar("T", bound=SQLModel)
 
 
 class AbstractRepository(ABC, Generic[T]):
