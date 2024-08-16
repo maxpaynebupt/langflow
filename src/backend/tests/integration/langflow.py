@@ -84,5 +84,6 @@ def test_run_flow_from_json_object():
     _, projects = zip(*load_starter_projects())
     project = [project for project in projects if "Basic Prompting" in project["name"]][0]
     results = run_flow_from_json(project, input_value="test", fallback_to_env_vars=True)
+
     assert results is not None
     assert all(isinstance(result, RunOutputs) for result in results)

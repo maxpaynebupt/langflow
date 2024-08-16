@@ -19,6 +19,12 @@ open_browser ?= true
 path = src/backend/base/langflow/frontend
 workers ?= 1
 async ?= true
+temp:
+	clear
+	poetry run pytest \
+		src/backend/tests/integration/langflow.py::test_run_flow_from_json_object \
+		--pdb
+
 all: help
 
 ######################
