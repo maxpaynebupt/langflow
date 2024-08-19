@@ -1,4 +1,5 @@
 import { AIMLIcon } from "@/icons/AIML";
+import Perplexity from "@/icons/Perplexity/Perplexity";
 import { AthenaIcon } from "@/icons/athena/index";
 import { freezeAllIcon } from "@/icons/freezeAll";
 import {
@@ -99,6 +100,7 @@ import {
   MoonIcon,
   MoreHorizontal,
   Network,
+  OptionIcon,
   Package2,
   Palette,
   Paperclip,
@@ -211,6 +213,7 @@ import { SearxIcon } from "../icons/Searx";
 import { ShareIcon } from "../icons/Share";
 import { Share2Icon } from "../icons/Share2";
 import SvgSlackIcon from "../icons/Slack/SlackIcon";
+import { SpiderIcon } from "../icons/Spider";
 import { Streamlit } from "../icons/Streamlit";
 import { UpstashSvgIcon } from "../icons/Upstash";
 import { VectaraIcon } from "../icons/VectaraIcon";
@@ -412,6 +415,7 @@ export const nodeIconsLucide: iconsType = {
   Weaviate: WeaviateIcon,
   Searx: SearxIcon,
   SlackDirectoryLoader: SvgSlackIcon,
+  SpiderTool: SpiderIcon,
   SupabaseVectorStore: SupabaseIcon,
   Supabase: SupabaseIcon,
   VertexAI: VertexAIIcon,
@@ -594,4 +598,7 @@ export const nodeIconsLucide: iconsType = {
   "AI/ML": AIMLIcon,
   GitLoader: GitLoaderIcon,
   athenaIcon: AthenaIcon,
+  OptionIcon: OptionIcon,
+  Option: OptionIcon,
+  Perplexity,
 };
