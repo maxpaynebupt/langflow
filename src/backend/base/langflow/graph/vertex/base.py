@@ -12,6 +12,7 @@ import pandas as pd
 from loguru import logger
 
 from langflow.exceptions.component import ComponentBuildException
+from langflow.graph.graph.schema import CallbackFunction
 from langflow.graph.schema import INPUT_COMPONENTS, OUTPUT_COMPONENTS, InterfaceComponentTypes, ResultData
 from langflow.graph.utils import UnbuiltObject, UnbuiltResult, log_transaction
 from langflow.graph.vertex.schema import NodeData
@@ -456,6 +457,7 @@ class Vertex:
         self,
         fallback_to_env_vars,
         user_id=None,
+        callback: CallbackFunction | None = None,
     ):
         """
         Initiate the build process.
@@ -467,12 +469,19 @@ class Vertex:
             raise ValueError(f"Base type for vertex {self.display_name} not found")
 
         if not self._custom_component:
-            custom_component, custom_params = await initialize.loading.instantiate_class(user_id=user_id, vertex=self)
+            custom_component, custom_params = await initialize.loading.instantiate_class(
+                user_id=user_id, vertex=self, callback=callback
+            )
         else:
             custom_component = self._custom_component
+            self._custom_component.set_callback(callback)
             custom_params = initialize.loading.get_params(self.params)
 
-        await self._build_results(custom_component, custom_params, fallback_to_env_vars)
+        await self._build_results(
+            custom_component=custom_component,
+            custom_params=custom_params,
+            fallback_to_env_vars=fallback_to_env_vars,
+        )
 
         self._validate_built_object()
 
@@ -760,6 +769,7 @@ class Vertex:
         inputs: Optional[Dict[str, Any]] = None,
         files: Optional[list[str]] = None,
         requester: Optional["Vertex"] = None,
+        callback: CallbackFunction | None = None,
         **kwargs,
     ) -> Any:
         async with self._lock:
@@ -789,9 +799,9 @@ class Vertex:
             for step in self.steps:
                 if step not in self.steps_ran:
                     if inspect.iscoroutinefunction(step):
-                        await step(user_id=user_id, **kwargs)
+                        await step(user_id=user_id, callback=callback, **kwargs)
                     else:
-                        step(user_id=user_id, **kwargs)
+                        step(user_id=user_id, callback=callback, **kwargs)
                     self.steps_ran.append(step)
 
             self._finalize_build()
