@@ -508,20 +508,6 @@ class CustomComponent(BaseComponent):
         """
         raise NotImplementedError
 
-    def log(self, message: LoggableType | list[LoggableType], name: Optional[str] = None):
-        """
-        Logs a message.
-
-        Args:
-            message (LoggableType | list[LoggableType]): The message to log.
-        """
-        if name is None:
-            name = f"Log {len(self._logs) + 1}"
-        log = Log(message=message, type=get_artifact_type(message), name=name)
-        self._logs.append(log)
-        if self._tracing_service and self._vertex:
-            self._tracing_service.add_log(trace_name=self.trace_name, log=log)
-
     def post_code_processing(self, new_frontend_node: dict, current_frontend_node: dict):
         """
         This function is called after the code validation is done.

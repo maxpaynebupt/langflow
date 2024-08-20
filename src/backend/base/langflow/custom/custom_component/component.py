@@ -12,6 +12,7 @@ from langflow.graph.state.model import create_state_model
 from langflow.helpers.custom import format_type
 from langflow.schema.artifact import get_artifact_type, post_process_raw
 from langflow.schema.data import Data
+from langflow.schema.log import LoggableType
 from langflow.schema.message import Message
 from langflow.services.tracing.schema import Log
 from langflow.template.field.base import UNDEFINED, Input, Output
@@ -667,3 +668,21 @@ class Component(CustomComponent):
         from langflow.base.tools.component_tool import ComponentTool
 
         return ComponentTool(component=self)
+
+    def log(self, message: LoggableType | list[LoggableType], name: Optional[str] = None):
+        """
+        Logs a message.
+
+        Args:
+            message (LoggableType | list[LoggableType]): The message to log.
+        """
+        if name is None:
+            name = f"Log {len(self._logs) + 1}"
+        log = Log(message=message, type=get_artifact_type(message), name=name)
+        self._logs.append(log)
+        if self._tracing_service and self._vertex:
+            self._tracing_service.add_log(trace_name=self.trace_name, log=log)
+        if self._callback is not None:
+            event_name = "log"
+            data = log.model_dump()
+            self._callback(event_name, data)
