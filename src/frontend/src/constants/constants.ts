@@ -889,3 +889,5 @@ export const NODE_WIDTH = 400;
 export const NODE_HEIGHT = NODE_WIDTH * 3;
 
 export const SHORTCUT_KEYS = ["cmd", "ctrl", "alt", "shift"];
+
+export const DRAG_EVENTS_CUSTOM_TYPESS = {"genericnode":"genericNode", "notenode":"noteNode"};
