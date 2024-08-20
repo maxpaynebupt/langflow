@@ -221,8 +221,10 @@ class Message(Data):
 
     @classmethod
     async def from_template_and_variables(cls, template: str, **variables):
+        print(f"prompt from variables: {template}, {variables}")
         instance = cls(template=template, variables=variables)
         text = instance.format_text()
+        print(f"formatted text: {text}")
         # Get all Message instances from the kwargs
         message = HumanMessage(content=text)
         contents = []
@@ -236,10 +238,10 @@ class Message(Data):
         prompt_template = ChatPromptTemplate.from_messages([message])  # type: ignore
 
         # Adds output format to the prompt
-        print(f"variables: {variables}")
-        print(f"Output parser: {variables.get('output_parser')}")
-        if "output_parser" in variables:
-            prompt_template.partial(format_instructions=variables["format_instructions"])
+        # print(f"variables: {variables}")
+        # print(f"Output parser: {variables.get('output_parser')}")
+        # if "output_parser" in variables:
+        #     prompt_template.partial(format_instructions=variables["format_instructions"])
 
         instance.prompt = jsonable_encoder(prompt_template.to_json())
         instance.messages = instance.prompt.get("kwargs", {}).get("messages", [])

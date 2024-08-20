@@ -26,11 +26,13 @@ class PromptComponent(Component):
     async def build_prompt(
         self,
     ) -> Message:
+        print("Building prompt")
         prompt = await Message.from_template_and_variables(**self._attributes)
         self.status = prompt.text
         return prompt
 
     def _update_template(self, frontend_node: dict):
+        print("Updating template")
         prompt_template = frontend_node["template"]["template"]["value"]
         custom_fields = frontend_node["custom_fields"]
         frontend_node_template = frontend_node["template"]
@@ -58,7 +60,7 @@ class PromptComponent(Component):
         )
         # Now that template is updated, we need to grab any values that were set in the current_frontend_node
         # and update the frontend_node with those values
-        update_template_values(new_template=frontend_node, previous_template=current_frontend_node["template", 'format_instructions'])
+        update_template_values(new_template=frontend_node, previous_template=current_frontend_node["template"])
         return frontend_node
 
     def _get_fallback_input(self, **kwargs):

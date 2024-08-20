@@ -32,6 +32,7 @@ _INVALID_NAMES = {
     "template",
     "template_format",
     "validate_template",
+    "format_instructions",
 }
 
 
@@ -141,6 +142,7 @@ def validate_prompt(prompt_template: str, silent_errors: bool = False) -> list[s
 
 
 def get_old_custom_fields(custom_fields, name):
+    print(f"get old custom_fields with initial custom fields: {custom_fields}")
     try:
         if len(custom_fields) == 1 and name == "":
             # If there is only one custom field and the name is empty string
@@ -155,6 +157,7 @@ def get_old_custom_fields(custom_fields, name):
     except KeyError:
         old_custom_fields = []
     custom_fields[name] = []
+    print(f"Old custom fields: {old_custom_fields}")
     return old_custom_fields
 
 
@@ -178,8 +181,11 @@ def add_new_variables_to_template(input_variables, custom_fields, template, name
 
 
 def remove_old_variables_from_template(old_custom_fields, input_variables, custom_fields, template, name):
+    print(f"Removing old variables: old custom fields: {old_custom_fields}")
+    print(f"Removing old vars: input_variables: {input_variables}")
+    print(f"Removing old vars: custom_fields: {custom_fields}")
     for variable in old_custom_fields:
-        if variable not in input_variables:
+        if variable not in input_variables: # and not key in custom fields
             try:
                 # Remove the variable from custom_fields associated with the given name
                 if variable in custom_fields[name]:
@@ -201,6 +207,9 @@ def update_input_variables_field(input_variables, template):
 def process_prompt_template(
     template: str, name: str, custom_fields: Optional[Dict[str, List[str]]], frontend_node_template: Dict[str, Any]
 ):
+    print(f"Processing prompt template: {template}")
+    print(f"Name: {name}")
+    print(f"custom_fields: {custom_fields}")
     """Process and validate prompt template, update template and custom fields."""
     # Validate the prompt template and extract input variables
     input_variables = validate_prompt(template)
@@ -213,6 +222,9 @@ def process_prompt_template(
     old_custom_fields = get_old_custom_fields(custom_fields, name)
 
     # Add new variables to the template
+    print(f"Adding new variables to the template: {input_variables}")
+    print(f"Custom fields: {custom_fields}")
+    print(f"name: {name}")
     add_new_variables_to_template(input_variables, custom_fields, frontend_node_template, name)
 
     # Remove old variables from the template
@@ -222,18 +234,20 @@ def process_prompt_template(
     update_input_variables_field(input_variables, frontend_node_template)
 
     # Optional: cleanup fields based on specific conditions
-    cleanup_prompt_template_fields(input_variables, frontend_node_template)
+    # cleanup_prompt_template_fields(input_variables, frontend_node_template)
 
     return input_variables
 
 
 def cleanup_prompt_template_fields(input_variables, template):
     """Removes unused fields if the conditions are met in the template."""
+    print(f"Cleaning up prompt template fields: {input_variables}")
     prompt_fields = [
         key for key, field in template.items() if isinstance(field, dict) and field.get("type") == "prompt"
     ]
 
     if len(prompt_fields) == 1:
+        print(f"Cleaning up prompt template fields because prompt ifelds is: {prompt_fields}")
         for key in list(template.keys()):  # Use list to copy keys
             field = template.get(key, {})
             if isinstance(field, dict) and field.get("type") != "code" and key not in input_variables + prompt_fields:

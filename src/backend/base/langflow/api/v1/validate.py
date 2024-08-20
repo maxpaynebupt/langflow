@@ -31,6 +31,7 @@ def post_validate_prompt(prompt_request: ValidatePromptRequest):
             )
 
         # Process the prompt template using direct attributes
+        print("Processing prompt template in /prmpt validation ")
         input_variables = process_prompt_template(
             template=prompt_request.template,
             name=prompt_request.name,
